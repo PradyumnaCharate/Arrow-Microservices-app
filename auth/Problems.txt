@@ -1,0 +1,32 @@
+For each post we are fetching one request so if there are 100 posts there will be 100 requests.so solving
+this with sync communication it is easy.ex.get localhost:5000/posts?comments=true
+
+But this 
+1.introduces dependency between services
+2.If one request fails overall request fails
+3.Entire request is only fast as slowest request
+4.can easily introduce webs of requests
+
+So With Async Communication
+1.It will be extremely fast 
+2.No dependencies
+3.No web of requests
+4.Hard to understand
+5.Data duplication
+But we can afford data duplication
+
+So with Async Communication
+1.Whenever we request post the new post it will emit an event named createdPost and event bus will catch it
+and send it to all parties like new query service which will have posts and comments related to that post.so 
+whichever service is intrested in event will pick that event
+2.So bus will forward event to all services and query service will add that post details like id and post content to 
+its respective datbase
+3.And whenever new comment is created it will also generate event and bus will forward it to query service.
+Then it will relate the comments to related post id.
+so each service will have different databases so no dependencies and fast requests.
+Although Data duplication
+
+so in this way microservices works.we have created our own event bus here using express router.
+But what if some service miss the event.i.e event occured when it was stopped.
+so we store all events in events service in some data structure and then respective service can
+query these all events and sync the data again

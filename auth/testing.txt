@@ -1,0 +1,9 @@
+For testing we are going to use jest and sepeset to call apis.
+Testing goals:
+1)Test single code(ex.just middleware)
+2)Test code pieces together(ex.middleware and route)
+3)test components together(if api and databases are working together correctly)
+4)testing services together(if receiving events and emitting events correctly)
+
+SO superset requires express app so we have refactored index.js code into app.js and index.js.app.js just configures express app.
+Also we will installing in memory mongodb so we can test multiple dataabases correctly.

@@ -1,0 +1,103 @@
+kubectl get pods                  --get all pods running
+kubectl get deployments           --get all deployments running
+kubectl delete pod pod_name         --delete pod
+if we delete pod deployment cluster pod then it will recreate new one
+
+kubectl describe deployment name
+kubectl delete deployment name
+if we want to update deployment then
+#Method 1
+1.Update code of pod
+2.create new image of pod and change version no
+3.in deployment config file update deployment image version
+4.again run the apply command
+
+Buit we should not declare this specific version so preferred method is not specifying version instead we should tell kubernates to 
+use latest version automatically anytime we create new image
+so we should not specify only image name without any version then it will use latest version
+
+
+and then docker push pradyumnacharate/posts
+kubectl rollout restart deployment name
+
+
+
+
+
+
+
+
+
+
+Services in ku8
+services provides networking between pods
+4 main services:
+1.Cluster Ip:Sets an easy to remember url to access a po.only exposes pod in cluster
+2.node-port:Makes pod accesible from outside of cluster.Usually only used for dev purposes
+3.Load-Balancer-Makes pod accesible from outside cluster.This is right way to make pod accesible to outside world
+4.Extenal name-redirect in-cluster request to cname url.
+
+
+
+
+Nodeport service is created with service object .yaml file
+and our service will be available from outside of pod
+
+For cluster Ip which helps communicating between different Services
+we created posts and event bus depl and then also cluster Ip service for both of them
+
+
+For load balancing Service it tell kubernates to reach out  to its provider (GCP,aws,azure) and provision a loada balancer.
+Gets a traffic to single pod.
+
+But it does not tell to which route traffic or requests should be distributed so we use ingress controller with load balancer.
+ingress controller is pod with set of routing rules to distribute traffic to other services.
+so we have written ingress config file.there we have written routing rules that if /posts request comes then to which pod's 
+cluster service we should forward it to. 
+so there at host we have specified posts.com.so client will make request to posts.com (we have edited client react -app for this)
+and whenever posts.com/posts it will get all posts.But we have edited windows/system32/drivers/etc/host file and added a line
+127.0.0.1 posts.com at the end so posts.com wont be searched online and it will forward request to localhost
+
+
+Ingress controller cannot differentiate on method of request i.e get,post.It will only differentiate on basis of route name
+
+
+
+Skaffold automates the dev deployment process 
+in skaffold.yaml in manifests we provide path for all config files of kubernetes so whenever these file changes 
+it automatically applies new configuration.So it do 3 things 
+1.When we start skaffold service it create thaty objects associated with config files.
+2.When we stop skaffold delete all objects 
+3.When changes apply changes
+
+In build section if we change any code in that specific fiolder i.e client then 
+1.if it is .js file in src directory then it will just copy that changed file and directly throw it to pod.
+2.if changes made other than .js file i.e package.json then it will entirely build new image.
+
+
+
+
+
+to share some secret key between services we can create secret in kubernetes cluster.
+kubectl create secret generic jwt-secret --from-literal=jwt=asdf
+generic means all purpose ...jwt-secret is name of secret.jwt =asdf is key value pair
+
+
+
+
+
+port forward pod_name 4222:4222(port number to forward and to forward)
+
+
+
+
+
+
+
+
+
+If somehow event publishing fails to event bus we have 1 solution(we have not implemented this but can do this)
+1)We can save event with its publiushed status to its repective service database.
+2)we can use mongodb datbase transactions and will save both resource to save and event about that in database 
+if any one of this fails du to poor database connection then we can rollback changes with help of
+mongodb transactions.
